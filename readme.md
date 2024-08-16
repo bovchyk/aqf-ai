@@ -15,3 +15,7 @@ High-level flow:
 - read questionnare, find questions 
 - request DB to find similar text
 - generate response useing LLM
+
+
+Думав може відразу під'єднати фреймворк що був чат, плюси в тому що можуть підключатися до багатьох каналів спілкування (whatsapp, telegram, viber, etc, voice), можуть підключатися до БД і векторних. Але то складна система буде, мені треба щось простіше... Ось список хороших: [microsoft botbuilder](https://github.com/microsoft/botbuilder-python), [botpress](https://github.com/botpress/botpress), [rasa](https://github.com/RasaHQ/rasa).
+Повертаюсь до ідеї рану зі скрипта, далі буде видно.

@@ -121,3 +121,5 @@ dmypy.json
 .idea
 
 logs
+
+chroma_langchain_db

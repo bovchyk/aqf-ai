@@ -10,11 +10,12 @@ from re import match
 
 # init logger
 logger = logging.getLogger(__name__)
-
+PROJECT_PATH=os.getenv("PROJECT_PATH")
+TARGET_SHEET_NAMES=os.getenv("TARGET_SHEET_NAMES")
 
 def preprocess_raw_files(args: Namespace) -> dict:
     # define path to the files 
-    input_files_path = os.path.join(os.getcwd(), args.input_files_path)
+    input_files_path = os.path.join(PROJECT_PATH, args.input_files_path)
     if not os.path.exists(input_files_path): 
         e = f"Incorrect files path provided: {input_files_path}"
         logger.error(e)
@@ -39,6 +40,7 @@ def preprocess_raw_files(args: Namespace) -> dict:
 
     return qa_pairs
 
+
 def load_spacy_model(model_name):
     # Function to check if a model is already installed
     def is_model_installed(model_name):
@@ -49,14 +51,13 @@ def load_spacy_model(model_name):
             return False
 
     # Check if the model is installed, if not, download it
-    # TODO add/change looger
     if not is_model_installed(model_name):
-        print(f"Model '{model_name}' not found. Downloading...")
+        logger.info(f"Model '{model_name}' not found. Downloading...")
         spacy.cli.download(model_name)
-        print(f"Model '{model_name}' loading...")
+        logger.info(f"Model '{model_name}' loading...")
         nlp = spacy.load("en_core_web_md")
     else:
-        print(f"Model '{model_name}' is already installed, loading...")
+        logger.info(f"Model '{model_name}' is already installed, loading...")
         nlp = spacy.load("en_core_web_md")
 
     return nlp
@@ -70,7 +71,8 @@ def parse_xls(file_name_path: str, nlp: object) -> dict:
     file_dict = pd.read_excel(file_name_path, sheet_name=None)
 
     # Find sheet using regexp, Sheet name should include word "question"
-    target_sheet_name = [x for x in list(file_dict.keys()) if match("Question*", x)]
+    # TODO make match works with list in target_sheet_names
+    target_sheet_name = [x for x in list(file_dict.keys()) if match(TARGET_SHEET_NAMES, x)]
 
     # internal, nlp object is not iterable so it should be inside this method
     #   fyi: non iterables can't be passed through map()
