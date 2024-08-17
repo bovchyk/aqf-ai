@@ -10,12 +10,11 @@ from re import search
 
 # init logger
 logger = logging.getLogger(__name__)
-PROJECT_PATH=os.getenv("PROJECT_PATH")
 TARGET_SHEET_NAMES=os.getenv("TARGET_SHEET_NAMES")
 
 def preprocess_raw_files(args: Namespace) -> dict:
     # define path to the files 
-    input_files_path = os.path.join(PROJECT_PATH, args.input_files_path)
+    input_files_path = os.path.join(os.getcwd(), args.input_files_path)
     if not os.path.exists(input_files_path): 
         e = f"Incorrect files path provided: {input_files_path}"
         logger.error(e)
