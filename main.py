@@ -57,7 +57,7 @@ def answer_one_question(args):
 
     # Log
     logger.info(f"Answer formed, answer: {answer}")
-    print(answer)
+    print(f"\nProposed answer: {answer}")
 
 
 def get_args():
@@ -78,7 +78,6 @@ if __name__ == "__main__":
     args = get_args()
 
     args.run_id = str(uuid.uuid4())
-    print(args)
 
     logger = init_logger(args)
 

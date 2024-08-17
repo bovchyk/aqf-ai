@@ -50,4 +50,4 @@ def get_vectore_store():
 
 def get_llm():
 
-    return ChatOpenAI(OPENAI_LLM_MODEL)
+    return ChatOpenAI(model=OPENAI_LLM_MODEL)

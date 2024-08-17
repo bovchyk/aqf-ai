@@ -1,16 +1,10 @@
 import os
 
-from langchain import hub
-from langchain_chroma import Chroma
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import OpenAIEmbeddings
-from langchain_core.documents import Document
-from uuid import uuid4
+from langchain_core.prompts import PromptTemplate
 
-from src.utils.common import get_llm, get_vectore_store
-
-
+from src.utils.common import get_llm
 
 LANGCHAIN_TRACING_V2=os.getenv("LANGCHAIN_TRACING_V2")
 LANGCHAIN_ENDPOINT=os.getenv("LANGCHAIN_ENDPOINT")
@@ -19,29 +13,44 @@ LANGCHAIN_PROJECT=os.getenv("LANGCHAIN_PROJECT")
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
 
 def form_answer_with_rag_qa_pairs(question, retrieved_docs) -> str:
-
+    # TODO as idea: move `retrieved_docs=retreive_similar_docs(args.question)`` from main py her
+    
+    # Define llm client
     llm = get_llm()
-
-    vector_store = get_vectore_store()
-
-    # по ходу `retreive_similar_docs(question, docs_filter=None)` з src/vdb/vdb_main.py лишнє
-    #   треба тільки розібратися як ленгчейн працює (додати doc.metadata["answer"])
-
-
-    # Retrieve and generate using the relevant snippets of the blog.
-    retriever = vector_store.as_retriever()
-    prompt = hub.pull("rlm/rag-prompt")
+    
+    # Generate context string
+    context = ""
+    for ind in range(0, len(retrieved_docs)):
+        context += "\n\nQuestion:" + retrieved_docs[ind].page_content
+        context += "Answer:" + retrieved_docs[ind].metadata["answer"]
 
 
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
+    # Template
+    template = """Use the answers to similar questions within QA_PAIRS section to answer the question at the end.
+    If QA_PAIRS section is empty, just say that you don't know, don't try to make up an answer.
+    Select the most relevant question-answer pairs and provide reference/requirement points if eligible and according to existing answers. 
+    Use two sentences maximum and keep the answer as concise as possible.
 
+    QA_PAIRS:
+    {context}
 
+    USER_QUESTION:
+    {question}
+    Helpful answer:"""
+    custom_rag_prompt = PromptTemplate.from_template(template)
+    
+    # Define langchain chain    
     rag_chain = (
-        {"context": retriever | format_docs, "question": RunnablePassthrough()}
-        | prompt
+        {"context": RunnablePassthrough(), "question": RunnablePassthrough()}
+        | custom_rag_prompt
         | llm
         | StrOutputParser()
     )
 
-    rag_chain.invoke(question)
+    # Invoke the chain
+    llm_response = rag_chain.invoke({
+        "context": context,
+        "question": question
+    })
+
+    return llm_response
