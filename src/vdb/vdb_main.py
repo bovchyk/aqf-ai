@@ -81,11 +81,3 @@ def retreive_similar_docs(question, docs_filter=None):
         logger.info(f"* {res.page_content} [{res.metadata}]")
     
     return results
-
-# def __main__ ...
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument('--input_files_path', type=str, help='An integer parameter')
-# parser.add_argument('--action', type=str, help='A string parameter')
-# args = parser.parse_args(['--input_files_path', 'data/raw_filled_security_questionnaire', "--action", "indexdb"])
-

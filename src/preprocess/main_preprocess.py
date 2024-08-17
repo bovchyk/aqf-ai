@@ -6,7 +6,7 @@ import spacy
 import itertools
 
 from argparse import Namespace
-from re import match
+from re import search
 
 # init logger
 logger = logging.getLogger(__name__)
@@ -69,10 +69,19 @@ def parse_xls(file_name_path: str, nlp: object) -> dict:
 
     # Read all sheets of file
     file_dict = pd.read_excel(file_name_path, sheet_name=None)
-
-    # Find sheet using regexp, Sheet name should include word "question"
-    # TODO make match works with list in target_sheet_names
-    target_sheet_name = [x for x in list(file_dict.keys()) if match(TARGET_SHEET_NAMES, x)]
+    sheet_names = list(file_dict.keys())
+    
+    # Find sheets using regexp
+    # Split the string by comma
+    patterns_list = TARGET_SHEET_NAMES.split(",")
+    patterns_list = [x.strip() for x in patterns_list]
+    
+    # Search sheet names matching sheet name patterns
+    sheet_names_list = []
+    for pattern in patterns_list:
+        sheet_names_list += [s for s in sheet_names if search(pattern, s)]
+    # Remove duplicates from the list
+    sheet_names_list = list(set(sheet_names_list))
 
     # internal, nlp object is not iterable so it should be inside this method
     #   fyi: non iterables can't be passed through map()
@@ -82,8 +91,8 @@ def parse_xls(file_name_path: str, nlp: object) -> dict:
     # Load data from the sheet
     #   TODO for now, we assume that there is only a one sheet corresponding to the match
     #   logic if there are two or more sheets corresponding to the match
-    if not target_sheet_name == None:
-        df = file_dict[target_sheet_name[0]]
+    if not sheet_names_list == None:
+        df = file_dict[sheet_names_list[0]]
         # Drop rows with NaN in any column
         df.dropna(inplace=True)
         df.reset_index(inplace=True, drop=True)
