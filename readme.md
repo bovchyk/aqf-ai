@@ -25,11 +25,11 @@ Based on existing Adyen Security Questionnaire example, [link](https://docs.adye
 
 
 ### Env variables
-OPENAI_API_KEY="sk-***" -- openai api key, openai platform [link](https://platform.openai.com/api-keys)
-OPENAI_LLM_MODEL="gpt-3.5-turbo"  -- openai model that will be used
-OPENAI_EMBEDDING_MODEL="text-embedding-ada-002" -- openai model for embeddings (keep embedding-ada-002, it is cheap)
-COLLECTION_NAME="aqf-ai-vector-store" -- vector store, string
-TARGET_SHEET_NAMES="uestion, Questionnaire, QAsheet" -- list of possible sheet names separated by commas which will be searched within .xlsx files. Use the most common part of the sheet names.
+OPENAI_API_KEY="sk-***" -- openai api key, openai platform [link](https://platform.openai.com/api-keys)  
+OPENAI_LLM_MODEL="gpt-3.5-turbo"  -- openai model that will be used  
+OPENAI_EMBEDDING_MODEL="text-embedding-ada-002" -- openai model for embeddings (keep embedding-ada-002, it is cheap)  
+COLLECTION_NAME="aqf-ai-vector-store" -- vector store, string  
+TARGET_SHEET_NAMES="uestion, Questionnaire, QAsheet" -- list of possible sheet names separated by commas which will be searched within .xlsx files. Use the most common part of the sheet names.  
 
 ----
 WIP (work in progress) notes, skip them.
